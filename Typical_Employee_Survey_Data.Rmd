@@ -1,0 +1,49 @@
+---
+title: "Homework 1(09-15)"
+author: "Fola Wu"
+date: "2025-09-20"
+output: html_document
+---
+
+```{r}
+
+str(MyData)
+summary(MyData$Age)
+summary(MyData$YearsInJob)
+boxplot(MyData$Age)
+boxplot(MyData$YearsInJob)
+```
+```{r}
+MyData$Age <- as.factor(MyData$Age)
+MyData$Gender <- as.factor(MyData$Gender)
+MyData$JobSatisfaction <- as.factor(MyData$JobSatisfaction)
+MyData$ImpJobCharact <- as.factor(MyData$ImpJobCharact)
+MyData$YearsInJob <- as.factor(MyData$YearsInJob)
+MyData$Promotion <- as.factor(MyData$Promotion)
+MyData$DecisionAuthority <- as.factor(MyData$DecisionAuthority)
+MyData$BudgetDecision <- as.factor(MyData$BudgetDecision)
+MyData$Proud <- as.factor(MyData$Proud)
+MyData$LikelihoodStay <- as.factor(MyData$LikelihoodStay)
+MyData$ColleaguesRelation <- as.factor(MyData$ColleaguesRelation)
+```
+
+```{r}
+barplot(table(MyData$Age), main = "Age", xlab = "People", ylab = "Age", col = "Blue")
+pie(table(MyData$Gender), main = "Gender")
+hist(table(MyData$JobSatisfaction), main = "Job Satisfaction")
+hist(table(MyData$ImpJobCharact), main = "ImpJobCharact")
+hist(table(MyData$YearsInJob), main = "Years In Job")
+hist(table(MyData$Promotion), main = "Promotion")
+pie(table(MyData$DecisionAuthority), main = "Decision Authority")
+pie(table(MyData$BudgetDecision), main = "Budget Decision")
+hist(table(MyData$Proud), main = "Proud")
+hist(table(MyData$LikelihoodStay), main = "Likelihood to Stay")
+hist(table(MyData$ColleaguesRelation), main = "Colleagues Relation")
+```
+```{r}
+scatter.smooth(MyData$JobSatisfaction, MyData$YearsInJob)
+scatter.smooth(MyData$Age, MyData$DecisionAuthority)
+scatter.smooth(MyData$YearsInJob, MyData$DecisionAuthority)
+scatter.smooth(MyData$Promotion,MyData$Proud)
+```
+
