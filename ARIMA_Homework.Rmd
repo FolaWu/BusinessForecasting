@@ -1,0 +1,50 @@
+---
+title: "Homework_7"
+author: "Fola Wu"
+date: "2025-11-18"
+output: html_document
+---
+```{r}
+library(fpp2)
+library(forecast)
+h02
+h02_timeseries <- ts(h02)
+```
+```{r}
+plot(h02)
+ndiffs(h02)
+tsdisplay(h02)
+h02timeseriesdiff1 <- diff(h02, differences=1)
+plot(h02timeseriesdiff1)
+tsdisplay(h02timeseriesdiff1)
+auto_fit <- auto.arima(h02_timeseries, trace=TRUE, stepwise = FALSE)
+auto_fit
+# Auto.arima initially selected ARIMA(2,1,2) with drift, but the model diagnostics were poor. The residuals showed strong autocorrelation and the Ljung–Box test returned p < 2.2e–16, indicating the model failed to capture the underlying structure. Therefore, the initial ARIMA selection was not adequate for this dataset.
+```
+```{r}
+auto.arima(h02_timeseries, d=2, max.p=5, max.q=5, stepwise=FALSE, approximation=FALSE, trace=TRUE)
+fit520 <- Arima(h02_timeseries, order=c(5,2,0))
+# Because the first difference (d = 1) still left strong autocorrelation in the residuals, a second difference was required to remove the remaining trend and make the series closer to stationary. After applying d = 2, ARIMA(5,2,0) was selected as the best candidate based on AIC, using five autoregressive terms and no MA components. However, even with improved AIC, the residual diagnostics still show autocorrelation, indicating that the model does not fully capture the structure of the series.
+
+Acf(fit520$residuals)
+# The residual ACF plot shows several spikes outside the confidence bounds, especially around lag 12, indicating significant autocorrelation remaining in the residuals. This means the ARIMA(5,2,0) model has not fully captured the structure in the data.
+
+Box.test(fit520$residuals, lag=20, type="Ljung")
+# The Ljung–Box test yields a p-value < 2.2e–16, strongly rejecting the null hypothesis of white-noise residuals. This confirms that the model leaves significant autocorrelation unexplained. Therefore, ARIMA(5,2,0) does not pass the required diagnostic checks.
+
+tsdiag(fit520)
+# The standardized residuals appear structured rather than random, and the ACF shows meaningful autocorrelation at multiple lags. The Ljung–Box p-value panel stays consistently below 0.05 across lags, indicating serial correlation in the errors. So, the diagnostic panel reinforces that the model is not adequately specified.
+
+forecast520 <- forecast(fit520, h=5)
+plot(forecast520)
+lines(forecast520$fitted)
+# The forecast shows a smooth declining projection with rapidly widening confidence intervals. Although the forecast behaves mathematically as expected from a second-differenced ARIMA model, its reliability is limited because the residual diagnostics failed.
+```
+```{r}
+accuracy(fit520)
+forecast520 <- forecast(fit520, h=5)
+accuracy(forecast520)
+# The accuracy shows RMSE = 0.176 and MAE = 0.117, indicating a moderate level of error in fitting the historical data. The MAPE of 17.76% suggests the model makes relatively large percentage errors, meaning the forecasts are not highly precise. Although ACF1 is close to zero, overall accuracy is limited because the model still suffers from residual autocorrelation.
+```
+
+
